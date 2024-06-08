@@ -1,0 +1,148 @@
+import pygame
+
+# Initialize Pygame
+pygame.init()
+
+WIDTH = 500  # Set window width
+HEIGHT = 500  # Set window height
+
+BACKGROUND = (255, 255, 255)  # Set Background Color to White
+
+# Create the Pygame window
+WINDOW = pygame.display.set_mode((WIDTH, HEIGHT))
+
+# Path to Images
+player1_avatar = 'boy.png'
+player2_avatar = 'catgirl.png'
+
+class Scoreboard:
+    def __init__(self, screen, p1, p2, bar_type):
+        self.font = pygame.font.Font('freesansbold.ttf', 32)
+        self.font1 = pygame.font.Font('freesansbold.ttf', 120)
+
+        # Scoreboard label
+        self.label = "Scoreboard"
+        self.TextLabel = self.font.render(str(self.label), True, (0, 0, 0), (255, 255, 255))
+        self.TextRect = self.TextLabel.get_rect(center=(WIDTH // 2, 45))
+
+        # Player 1
+        self.playerOneLabel = "Player 1"
+        self.playerOneTextLabel = self.font.render(str(self.playerOneLabel), True, (0, 0, 0), (255, 255, 255))
+        self.playerOneTextRect = self.playerOneTextLabel.get_rect(center=(100, 200))
+        self.playerOneScore = p1
+        self.playerOneScoreText = self.font.render(str(self.playerOneScore), True, (0, 0, 0), (255, 255, 255))
+        self.playerOneScoreRect = self.playerOneScoreText.get_rect(center=(100, 250))
+
+        picture1 = pygame.image.load(player1_avatar)
+        self.image1 = pygame.transform.scale(picture1, (100, 100))
+        self.imageRect1 = self.image1.get_rect(center=(100, 125))
+
+        # Player 2
+        self.playerTwoLabel = "Player 2"
+        self.playerTwoTextLabel = self.font.render(str(self.playerTwoLabel), True, (0, 0, 0), (255, 255, 255))
+        self.playerTwoTextRect = self.playerTwoTextLabel.get_rect(center=(WIDTH - 100, 200))
+        self.playerTwoScore = p2
+        self.playerTwoScoreText = self.font.render(str(self.playerTwoScore), True, (0, 0, 0), (255, 255, 255))
+        self.playerTwoScoreRect = self.playerTwoScoreText.get_rect(center=(WIDTH - 100, 250))
+
+        picture2 = pygame.image.load(player2_avatar)
+        self.image2 = pygame.transform.scale(picture2, (100, 100))
+        self.imageRect2 = self.image2.get_rect(center=(WIDTH - 100, 125))
+
+        self.draw_bars(screen, p1, p2, bar_type)
+
+    def draw_bars(self, screen, p1, p2, bar_type):
+        max_length = WIDTH // 3
+        y_pos = HEIGHT * 4 // 5
+
+        if bar_type == 'BAR 1':
+            if not (p1 == 0 and p2 == 0):
+                if p1 == 0:
+                    fill = 0
+                elif p2 == 0:
+                    fill = max_length
+                else:
+                    percentage = p1 / (p1 + p2) * 100
+                    total = 100 / percentage
+                    fill = max_length / total
+            else:
+                fill = 0
+
+            if p2 != 0:
+                pygame.draw.rect(screen, (0, 0, 255), ((max_length, y_pos), (int(max_length), 20)))  # Fill
+            if p1 != 0:
+                pygame.draw.rect(screen, (255, 0, 0), ((max_length, y_pos), (int(fill), 20)))  # Fill
+            pygame.draw.rect(screen, (0, 0, 0), ((max_length, y_pos), (max_length, 20)), 4)  # Border
+
+        elif bar_type == 'BAR 2':
+            try:
+                percentage = p1 / (p1 + p2) * 100
+                total_p1 = 100 / percentage
+                fill_p1 = max_length / total_p1
+            except ZeroDivisionError:
+                fill_p1 = 0
+
+            try:
+                percentage = p2 / (p1 + p2) * 100
+                total_p2 = 100 / percentage
+                fill_p2 = max_length / total_p2
+            except ZeroDivisionError:
+                fill_p2 = 0
+
+            if p1 != 0:
+                pygame.draw.rect(screen, (255, 0, 0), ((max_length, y_pos + 15), (int(fill_p1), 20)))  # Fill
+            if p2 != 0:
+                pygame.draw.rect(screen, (0, 0, 255), ((max_length, y_pos - 15), (int(fill_p2), 20)))  # Fill
+
+            pygame.draw.rect(screen, (0, 0, 0), ((max_length, y_pos - 15), (max_length, 20)), 4)  # Border
+            pygame.draw.rect(screen, (0, 0, 0), ((max_length, y_pos + 15), (max_length, 20)), 4)  # Border
+
+def main():
+    clock = pygame.time.Clock()
+    screen = pygame.display.set_mode((WIDTH, HEIGHT))
+    Player1 = 0
+    Player2 = 0
+    bar_state = 0
+    run = True
+
+    while run:
+        screen.fill(BACKGROUND)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_a:
+                    if Player1 < 20:
+                        Player1 += 1
+                elif event.key == pygame.K_s:
+                    if Player2 < 20:
+                        Player2 += 1
+                elif event.key == pygame.K_z:
+                    if Player1 != 0:
+                        Player1 -= 1
+                elif event.key == pygame.K_x:
+                    if Player2 != 0:
+                        Player2 -= 1
+                elif event.key == pygame.K_r:
+                    Player1 = 0
+                    Player2 = 0
+                elif event.key == pygame.K_m:
+                    bar_state = (bar_state + 1) % 2
+                elif event.key == pygame.K_SPACE:
+                    run = False
+
+        bar_type = 'BAR 1' if bar_state == 0 else 'BAR 2'
+        screen1 = Scoreboard(screen, Player1, Player2, bar_type)
+        screen.blit(screen1.TextLabel, screen1.TextRect)
+        screen.blit(screen1.playerOneTextLabel, screen1.playerOneTextRect)
+        screen.blit(screen1.playerOneScoreText, screen1.playerOneScoreRect)
+        screen.blit(screen1.image1, screen1.imageRect1)
+        screen.blit(screen1.playerTwoTextLabel, screen1.playerTwoTextRect)
+        screen.blit(screen1.playerTwoScoreText, screen1.playerTwoScoreRect)
+        screen.blit(screen1.image2, screen1.imageRect2)
+
+        pygame.display.flip()
+        clock.tick(60)
+
+if __name__ == "__main__":
+    main()
