@@ -1,0 +1,77 @@
+import turtle
+import random
+
+# Game setup
+screen = turtle.Screen()
+
+# Create Player 1 Turtle
+player1 = turtle.Turtle()
+player1.color(???)
+player1.shape("turtle")
+player1.penup()
+player1.goto(???)
+
+# Create Player 2 Turtle (clone of Player 1 with a different color)
+player2 = player1.clone()
+player2.color(???)
+player2.goto(???)
+
+# Draw Player 1's Home Base
+player1_home = turtle.Turtle()
+player1_home.penup()
+player1_home.goto(300, 60)
+player1_home.pendown()
+player1_home.circle(40)
+player1_home.penup()
+player1_home.hideturtle()
+
+# Draw Player 2's Home Base
+player2_home = turtle.Turtle()
+player2_home.penup()
+player2_home.goto(300, -140)
+player2_home.pendown()
+player2_home.circle(40)
+player2_home.penup()
+player2_home.hideturtle()
+
+# Create a turtle to display game messages
+message = turtle.Turtle()
+message.penup()
+message.hideturtle()
+
+# Die roll function
+def roll_die():
+    return random.choice([???])
+
+# Game logic
+def play_game():
+    while True:
+        # Player 1's turn
+        input("Player 1, press Enter to roll the die.")
+        roll = ???
+        print("Player 1 rolls:", roll)
+        player1.forward(roll * 20)
+        
+        # Check if Player 1 wins
+        if player1.xcor() >= 300:
+            message.goto(0, 0)
+            message.write("Player 1 Wins!", align="center", font=("Arial", 24, "bold"))
+            break
+
+        # Player 2's turn
+        input("Player 2, press Enter to roll the die.")
+        roll = ???
+        print("Player 2 rolls: ", roll)
+        player2.forward(roll * 20)
+
+        # Check if Player 2 wins
+        if player2.xcor() >= ???:
+            message.goto(???)
+            message.write("Player 2 Wins!", align="center", font=("Arial", 24, "bold"))
+            break
+
+# Start the game
+play_game()
+
+# Close the turtle graphics window when the game ends
+turtle.done()
